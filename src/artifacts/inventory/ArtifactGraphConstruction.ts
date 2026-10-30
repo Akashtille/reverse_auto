@@ -4,6 +4,8 @@ import { hasUImageMagic } from "../../domain/uimageFormat.js";
 import { hasUnityFsHeader } from "../../domain/unityfsFormat.js";
 import { detectHexRecordEncoding } from "../../domain/firmware/hexRecords.js";
 import { recognizeEspImage } from "../../domain/firmware/espImage.js";
+import { hasUf2Block } from "../../domain/firmware/uf2.js";
+import { isDfuSeFile } from "../../domain/firmware/dfuse.js";
 import { hasFitImagesNode } from "../../domain/firmware/fitImage.js";
 import type { ArtifactClassificationEvidence } from "../ArtifactClassificationProbe.js";
 import { asarHeaderAdmissionFailure } from "../AsarHeader.js";
@@ -587,13 +589,16 @@ export const classifyArtifactBytes = (
   evidence: ArtifactClassificationEvidence,
   fileSize = evidence.prefix.length,
 ): ArtifactNode["format"] => {
-  const { prefix, mzWindowsHeaderSignature } = evidence;
+  const { prefix, suffix, mzWindowsHeaderSignature } = evidence;
   if (hasZipSignature(prefix)) return "zip";
   if (hasGodotPckHeader(prefix)) return "godot-pck";
   if (hasUnityFsHeader(prefix)) return "unityfs";
   if (hasUImageMagic(prefix)) return "uimage";
   const hexRecords = detectHexRecordEncoding(prefix);
   if (hexRecords !== undefined) return hexRecords;
+  if (hasUf2Block(prefix)) return "uf2";
+  if (suffix !== undefined && isDfuSeFile(prefix, suffix, fileSize))
+    return "dfuse";
   if (recognizeEspImage(prefix, fileSize) === "esp-image") return "esp-image";
   if (hasFitImagesNode(prefix)) return "fit";
   if (hasBinaryPlistSignature(prefix)) return "plist";

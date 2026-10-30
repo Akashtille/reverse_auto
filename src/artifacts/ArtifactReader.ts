@@ -4,6 +4,7 @@ import type {
   ArtifactLimitBoundary,
 } from "../domain/artifactOperationError.js";
 import type {
+  ArtifactContainerIntegrityPair,
   ArtifactIntegrityClaim,
   ArtifactIntegrityDetails,
 } from "../domain/artifactIntegrity.js";
@@ -203,6 +204,8 @@ export interface ArtifactReader {
     | "intel-hex"
     | "srec"
     | "esp-image"
+    | "uf2"
+    | "dfuse"
     | "fit"
     | "file";
   entries(
@@ -212,6 +215,8 @@ export interface ArtifactReader {
   open(entry: ArtifactEntry, signal?: AbortSignal): Promise<Readable>;
   provenance(): readonly ArtifactCommand[];
   formatMetadata?(): ArtifactFormatMetadata | undefined;
+  /** A checksum the container declares over its own bytes, with the observed value. */
+  containerIntegrity?(): ArtifactContainerIntegrityPair | undefined;
   /** Bind materialization to the exact inventoried carrier before creating outputs. */
   prepareContainer?(
     expectedSha256: string,

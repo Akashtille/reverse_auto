@@ -37,6 +37,8 @@ type FormatsWithReaders =
   | "intel-hex"
   | "srec"
   | "esp-image"
+  | "uf2"
+  | "dfuse"
   | "fit";
 
 const readerFormatsMatch: Equal<ArtifactReaderFormat, FormatsWithReaders> =

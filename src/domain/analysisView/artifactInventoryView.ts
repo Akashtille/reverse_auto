@@ -275,6 +275,8 @@ export const projectArtifactInventoryView = (
     inventory.manifest.root_format === "intel-hex" ||
     inventory.manifest.root_format === "srec" ||
     inventory.manifest.root_format === "esp-image" ||
+    inventory.manifest.root_format === "uf2" ||
+    inventory.manifest.root_format === "dfuse" ||
     inventory.manifest.root_format === "fit";
   const counts = inventoryCounts(source);
   const limitations = uniqueSorted([
